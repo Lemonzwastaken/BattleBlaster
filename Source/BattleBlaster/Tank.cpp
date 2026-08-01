@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"  
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
+#include "Kismet/GameplayStatics.h"
 
 ATank::ATank()
 {
@@ -54,9 +55,14 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void ATank::MoveInput()
+void ATank::MoveInput(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp, Display, TEXT("Move Input"));
+	
+	float InputValue = Value.Get<float>();
+	FVector DeltaLocation = FVector{ 0.0f, 0.0f, 0.0f };
+	DeltaLocation.X = Speed * InputValue * UGameplayStatics::GetWorldDeltaSeconds(GetWorld());
+	AddActorLocalOffset(DeltaLocation, true);
 
-
+	
+	UE_LOG(LogTemp, Display, TEXT("InputValue: %f"), InputValue);
 }
