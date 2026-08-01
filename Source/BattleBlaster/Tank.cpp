@@ -5,6 +5,8 @@
 #include "Camera/CameraComponent.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"  
+#include "EnhancedInputComponent.h"
+#include "InputAction.h"
 
 ATank::ATank()
 {
@@ -43,5 +45,18 @@ void ATank::Tick(float DeltaTime)
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	//Save enhanced input component
+	if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
+		EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATank::MoveInput);
+	}
+
+
+}
+
+void ATank::MoveInput()
+{
+	UE_LOG(LogTemp, Display, TEXT("Move Input"));
+
 
 }

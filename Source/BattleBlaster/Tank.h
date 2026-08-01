@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "BasePawn.h"
-
+#include "InputAction.h"
+#include "InputActionValue.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -37,9 +38,16 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* DefaultMappingContext;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* MoveAction;
+
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
+
+	void MoveInput();
+
 };
+
