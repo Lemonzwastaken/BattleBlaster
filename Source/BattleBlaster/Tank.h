@@ -9,8 +9,9 @@
 #include "Camera/CameraComponent.h"
 #include "EnhancedInputSubsystems.h"
 
-
 #include "Tank.generated.h"
+
+class UCameraComponent;
 
 /**
  *

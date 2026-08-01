@@ -14,7 +14,7 @@ class BATTLEBLASTER_API ABattleBlasterGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(
+
 
 
 	

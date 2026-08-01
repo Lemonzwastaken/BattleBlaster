@@ -2,6 +2,9 @@
 
 
 #include "Tank.h"
+#include "Camera/CameraComponent.h"
+#include "InputMappingContext.h"
+#include "EnhancedInputSubsystems.h"  
 
 ATank::ATank()
 {
@@ -17,24 +20,16 @@ void ATank::BeginPlay()
 {
 	Super::BeginPlay();
 
-	APlayerController* PlayerController = Cast<APlayerController>(Controller);
-
-	if (PlayerController)
-	{	
-		ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
-
-		if (LocalPlayer)
+	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	{
+		if (ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer())
 		{
-			UEnhancedInputLocalPlayerSubsystem* SubSystem;
-			SubSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer);
-			if (SubSystem)
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer))
 			{
-				SubSystem->AddMappingContext(DefaultMappingContext, 0);
+				Subsystem->AddMappingContext(DefaultMappingContext, 0);
 			}
 		}
 	}
-
-
 }
 
 // Called every frame
