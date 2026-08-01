@@ -55,9 +55,9 @@ public:
 
 
 	UPROPERTY(EditAnywhere)
-	float Speed = 300.0f;
+	float Speed = 500.0f;
 
 	UPROPERTY(EditAnywhere)
-	float TurnRate = 300.0f;
+	float TurnRate = 100.0f;
 };
 
