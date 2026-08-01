@@ -10,27 +10,25 @@ ATank::ATank()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
-
 }
 
-
+// Called when the game starts or when spawned
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
 
 }
 
+// Called every frame
 void ATank::Tick(float DeltaTime)
 {
-
-
+	Super::Tick(DeltaTime);
 
 }
 
+// Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-
-
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
