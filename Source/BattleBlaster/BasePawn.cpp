@@ -15,10 +15,10 @@ ABasePawn::ABasePawn()
 	SetRootComponent(CapsuleComp);
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base Component"));
-	CapsuleComp->SetupAttachment(BaseMesh);
+	BaseMesh->SetupAttachment(CapsuleComp);
 
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Turret Component"));
-	CapsuleComp->SetupAttachment(TurretMesh);
+	TurretMesh->SetupAttachment(CapsuleComp);
 
 
 }
