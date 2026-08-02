@@ -8,9 +8,7 @@ void ATower::BeginPlay()
 	Super::BeginPlay();
 
 	FTimerHandle FireTimerHandle;
-	GetWorldTimerManager().SetTimer(FireTimerHandle, this, &ATower::CheckFireCondition, FireRate, false);
-
-
+	GetWorldTimerManager().SetTimer(FireTimerHandle, this, &ATower::CheckFireCondition, FireRate, true);
 }
 
 void ATower::Tick(float DeltaTime)
@@ -25,7 +23,7 @@ void ATower::Tick(float DeltaTime)
 
 void ATower::CheckFireCondition()
 {
-	if (IsInFireRange())
+	if (Tank && IsInFireRange())
 	{
 		Fire();
 	}
