@@ -7,7 +7,8 @@ void ATower::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	FTimerHandle FireTimerHandle;
+	GetWorldTimerManager().SetTimer(FireTimerHandle, this, &ATower::CheckFireCondition, FireRate, false);
 
 
 }
@@ -16,17 +17,29 @@ void ATower::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (IsInFireRange())
+	{
+		RotateTurret(Tank->GetActorLocation());
+	}
+}
+
+void ATower::CheckFireCondition()
+{
+	if (Tank && IsInFireRange())
+	{
+		Fire();
+	}
+}
+
+bool ATower::IsInFireRange()
+{
+	bool Result = false;
+
 	if (Tank)
 	{
 		float DistanceToTank = FVector::Dist(GetActorLocation(), Tank->GetActorLocation());
-
-		if (DistanceToTank <= FireRange)
-		{
-
-			RotateTurret(Tank->GetActorLocation());
-		}
-	
+		Result = (DistanceToTank <= FireRange);
 	}
 
-
+	return Result;
 }
