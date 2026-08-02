@@ -4,11 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+
 #include "Tank.h"
+
 #include "BattleBlasterGameMode.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class BATTLEBLASTER_API ABattleBlasterGameMode : public AGameModeBase
@@ -20,8 +22,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-
 	ATank* Tank;
 	int32 TowerCount;
-	
 };
