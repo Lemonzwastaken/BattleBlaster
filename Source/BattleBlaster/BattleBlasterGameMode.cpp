@@ -57,6 +57,8 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 			UE_LOG(LogTemp, Display, TEXT("Tower just died"));
 			TowerCount = -1;
 
+			DeadTower->Destroy();
+
 			if (TowerCount <= 0)
 			{
 				UE_LOG(LogTemp, Display, TEXT("VICTORY!!!"));
