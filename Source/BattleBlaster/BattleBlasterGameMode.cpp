@@ -42,3 +42,25 @@ void ABattleBlasterGameMode::BeginPlay()
 		LoopIndex++;
 	}
 }
+
+void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
+{
+	if (DeadActor == Tank)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Tank Died!"));
+	}
+	else
+	{
+		ATower* DeadTower = Cast<ATower>(DeadActor);
+		if (DeadTower)
+		{
+			UE_LOG(LogTemp, Display, TEXT("Tower just died"));
+			TowerCount = -1;
+
+			if (TowerCount <= 0)
+			{
+				UE_LOG(LogTemp, Display, TEXT("VICTORY!!!"));
+			}
+		}
+	}
+}

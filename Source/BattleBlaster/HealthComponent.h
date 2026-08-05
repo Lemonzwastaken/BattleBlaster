@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "HealthComponent.generated.h"
 #include "BattleBlasterGameMode.h"
+#include "HealthComponent.generated.h"
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BATTLEBLASTER_API UHealthComponent : public UActorComponent
@@ -31,7 +32,8 @@ public:
 	float Health;
 
 	UFUNCTION()
-	void OdnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+	void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
 
+	ABattleBlasterGameMode* BattleBlasterGameMode;
 
 };
