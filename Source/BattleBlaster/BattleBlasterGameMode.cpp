@@ -48,7 +48,6 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 	bool IsGameOver = false;
 	bool IsVictory = false;
 
-
 	if (DeadActor == Tank)
 	{
 		Tank->HandleDestruction();
@@ -64,15 +63,27 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 			TowerCount--;
 			if (TowerCount == 0)
 			{
-				UE_LOG(LogTemp, Display, TEXT("All towers are dead, victory!"));
+				IsGameOver = true;
 				IsVictory = true;
 			}
 		}
 	}
 
-	FString GameOverString = IsVictory ? "Victory!" : "Defeat!";
+	if (IsGameOver)
+	{
+		FString GameOverString = IsVictory ? "Victory!" : "Defeat!";
 
+		UE_LOG(LogTemp, Display, TEXT("Game over: %s"), *GameOverString);
 
+		FTimerHandle GameOverTimerHandle;
+		GetWorldTimerManager().SetTimer(GameOverTimerHandle, this, &ABattleBlasterGameMode::OnGameOverTimerTimeout, GameOverDelay, false);
+	}
+}
+
+void ABattleBlasterGameMode::OnGameOverTimerTimeout()
+{
+	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
+	UGameplayStatics::OpenLevel(GetWorld(), *CurrentLevelName);
 
 
 }

@@ -34,6 +34,8 @@ void ATank::BeginPlay()
 			}
 		}
 	}
+
+
 }
 
 // Called every frame
