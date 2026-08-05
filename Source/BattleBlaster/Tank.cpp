@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "Tank.h"
 
 #include "Camera/CameraComponent.h"
@@ -20,13 +19,16 @@ ATank::ATank()
 void ATank::BeginPlay()
 {
 	Super::BeginPlay();
-	PlayerController = Cast<APlayerController>(Controller);
+
+	// Store the controller in the member variable
+	PlayerController = Cast<APlayerController>(GetController());
 
 	if (PlayerController)
 	{
 		if (ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer())
 		{
-			if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer))
+			if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
+				ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(LocalPlayer))
 			{
 				Subsystem->AddMappingContext(DefaultMappingContext, 0);
 			}
@@ -58,9 +60,7 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATank::MoveInput);
-
 		EIC->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::TurnInput);
-
 		EIC->BindAction(FireAction, ETriggerEvent::Started, this, &ATank::Fire);
 	}
 }
@@ -69,8 +69,9 @@ void ATank::MoveInput(const FInputActionValue& Value)
 {
 	float InputValue = Value.Get<float>();
 
-	FVector DeltaLocation = FVector(0.0f, 0.0f, 0.0f);
-	DeltaLocation.X = Speed * InputValue * UGameplayStatics::GetWorldDeltaSeconds(GetWorld());
+	FVector DeltaLocation = FVector::ZeroVector;
+	DeltaLocation.X = Speed * InputValue * GetWorld()->GetDeltaSeconds();
+
 	AddActorLocalOffset(DeltaLocation, true);
 }
 
@@ -78,7 +79,7 @@ void ATank::TurnInput(const FInputActionValue& Value)
 {
 	float InputValue = Value.Get<float>();
 
-	FRotator DeltaRotation = FRotator(0.0f, 0.0f, 0.0f);
+	FRotator DeltaRotation = FRotator::ZeroRotator;
 	DeltaRotation.Yaw = TurnRate * InputValue * GetWorld()->GetDeltaSeconds();
 
 	AddActorLocalRotation(DeltaRotation, true);
@@ -88,11 +89,13 @@ void ATank::HandleDestruction()
 {
 	Super::HandleDestruction();
 
+	UE_LOG(LogTemp, Display, TEXT("Tank HandleDestruction!"));
+
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
 	SetPlayerEnabled(false);
 
-	UE_LOG(LogTemp, Display, TEXT("Tank HandleDestruction!"));
+	IsAlive = false;
 }
 
 void ATank::SetPlayerEnabled(bool Enabled)
@@ -103,10 +106,9 @@ void ATank::SetPlayerEnabled(bool Enabled)
 		{
 			EnableInput(PlayerController);
 		}
+		else
+		{
+			DisableInput(PlayerController);
+		}
 	}
-	else
-	{
-		DisableInput(PlayerController);
-	}
-
 }
