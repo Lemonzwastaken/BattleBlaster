@@ -26,6 +26,4 @@ public:
 	int32 TowerCount;
 
 	void ActorDied(AActor* DeadActor);
-
-	
 };

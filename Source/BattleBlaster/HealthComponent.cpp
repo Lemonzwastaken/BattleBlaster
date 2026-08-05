@@ -49,7 +49,6 @@ void UHealthComponent::OnDamageTaken(AActor* DamagedActor, float Damage, const U
 		Health -= Damage;
 		if (Health <= 0.0f)
 		{
-			GetOwner()->Destroy();
 			if (BattleBlasterGameMode)
 			{
 				BattleBlasterGameMode->ActorDied(DamagedActor);
@@ -57,3 +56,4 @@ void UHealthComponent::OnDamageTaken(AActor* DamagedActor, float Damage, const U
 		}
 	}
 }
+
