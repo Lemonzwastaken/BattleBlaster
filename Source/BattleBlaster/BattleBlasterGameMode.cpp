@@ -70,15 +70,7 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 		}
 	}
 
-	FString GameOverString;
-	if (IsGameOver)
-	{
-		GameOverString = "Victory";
-	}
-	else
-	{
-		GameOverString = "Defeat";
-	}
+	FString GameOverString = IsVictory ? "Victory!" : "Defeat!";
 
 
 
