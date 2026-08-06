@@ -57,6 +57,24 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 		}
 	}
 
+	// Hide the mesh and stop movement/collision so the projectile "disappears"
+	ProjectileMesh->SetVisibility(false);
+	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	ProjectileMovementComp->StopMovementImmediately();
+
+	if (TrailParticles)
+	{
+		TrailParticles->Deactivate();
+		TrailParticles->OnSystemFinished.AddDynamic(this, &AProjectile::OnTrailFinished);
+	}
+	else
+	{
+		Destroy();
+	}
+}
+
+void AProjectile::OnTrailFinished(UNiagaraComponent* PSystem)
+{
 	Destroy();
 }
 
