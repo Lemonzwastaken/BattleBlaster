@@ -28,9 +28,18 @@ public:
 	ATank* Tank;
 	int32 TowerCount;
 
+	UPROPERTY(EditAnywhere)
+	int32 CountdownDelay = 3;
+
+	int32 CountdownSeconds;
+
+	FTimerHandle CountdownTimerHandle;
+
 	void ActorDied(AActor* DeadActor);
 
 	void OnGameOverTimerTimeout();
+	void OnCountDownTimerTimeout();
+
 
 	bool IsVictory = false;
 

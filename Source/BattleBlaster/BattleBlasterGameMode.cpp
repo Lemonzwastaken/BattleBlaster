@@ -5,6 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Tower.h"
+#include "BattleBlasterGameInstance.h"
 
 void ABattleBlasterGameMode::BeginPlay()
 {
@@ -41,7 +42,35 @@ void ABattleBlasterGameMode::BeginPlay()
 
 		LoopIndex++;
 	}
+
+	CountdownSeconds = CountdownDelay;
+	GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &ABattleBlasterGameMode::OnCountDownTimerTimeout, 1.0f, true);
 }
+
+
+void ABattleBlasterGameMode::OnCountDownTimerTimeout()
+{
+
+	CountdownSeconds -= 1;
+
+	if (CountdownSeconds > 0)
+	{
+		UE_LOG(LogTemp, Display, TEXT("CountDown: %d"), CountdownSeconds);
+	}
+	else if (CountdownSeconds == 0)
+	{
+		UE_LOG(LogTemp, Display, TEXT("GOO"));
+		Tank->SetPlayerEnabled(true);
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
+		UE_LOG(LogTemp, Display, TEXT("Cleared Timer"));
+	}
+
+}
+
+
 
 void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 {
@@ -83,14 +112,23 @@ void ABattleBlasterGameMode::OnGameOverTimerTimeout()
 {
 	FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(GetWorld());
 
-	if (IsVictory)
+	UGameInstance* GameInstance = GetGameInstance();
+	if (GameInstance)
 	{
-
+		UBattleBlasterGameInstance* BattleBlasterGameInstance = Cast<UBattleBlasterGameInstance>(GameInstance);
+		if (BattleBlasterGameInstance)
+		{
+			if (IsVictory)
+			{
+				// Load the next level
+				BattleBlasterGameInstance->LoadNextLevel();
+			}
+			else
+			{
+				// Reload the current level
+				UGameplayStatics::OpenLevel(GetWorld(), *CurrentLevelName);
+				BattleBlasterGameInstance->RestartCurrentLevel();
+			}
+		}
 	}
-	else
-	{
-
-	}
-
-
 }
