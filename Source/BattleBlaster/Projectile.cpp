@@ -21,9 +21,6 @@ AProjectile::AProjectile()
 	TrailParticles = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TrailParticles"));
 	TrailParticles->SetupAttachment(RootComponent);
 
-
-
-
 }
 
 // Called when the game starts or when spawned
@@ -32,6 +29,11 @@ void AProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+
+	if (LaunchSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), LaunchSound, GetActorLocation());
+	}
 }
 
 // Called every frame
@@ -54,6 +56,10 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 			{
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitParticles, GetActorLocation(), GetActorRotation());
 			}
+			if (HitSound)
+			{
+				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, GetActorLocation());
+			}
 		}
 	}
 
@@ -62,7 +68,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	ProjectileMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	ProjectileMovementComp->StopMovementImmediately();
 
-	if (TrailParticles)
+	if (TrailParticles && TrailParticles->GetAsset())
 	{
 		TrailParticles->Deactivate();
 		TrailParticles->OnSystemFinished.AddDynamic(this, &AProjectile::OnTrailFinished);
