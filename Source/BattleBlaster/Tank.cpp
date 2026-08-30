@@ -45,14 +45,19 @@ void ATank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	CurrentMoveInput = FMath::FInterpConstantTo(CurrentMoveInput, TargetMoveInput, DeltaTime, Acceleration / Speed);
+	if (bIsBraking)
+	{
+		CurrentMoveInput = FMath::FInterpConstantTo(CurrentMoveInput, 0.0f, DeltaTime, BrakeDeceleration / Speed);
+	}
+	else
+	{
+		CurrentMoveInput = FMath::FInterpConstantTo(CurrentMoveInput, TargetMoveInput, DeltaTime, Acceleration / Speed);
+	}
 
 	FVector DeltaLocation = FVector::ZeroVector;
 	DeltaLocation.X = Speed * CurrentMoveInput * DeltaTime;
 
 	AddActorLocalOffset(DeltaLocation, true);
-
-
 }
 
 // Called to bind functionality to input
@@ -67,7 +72,19 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EIC->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::TurnInput);
 		EIC->BindAction(TurretTurnAction, ETriggerEvent::Triggered, this, &ATank::TurretTurnInput);
 		EIC->BindAction(FireAction, ETriggerEvent::Started, this, &ATank::Fire);
+		EIC->BindAction(BrakeAction, ETriggerEvent::Started, this, &ATank::BrakeInput);
+		EIC->BindAction(BrakeAction, ETriggerEvent::Completed, this, &ATank::BrakeInputCompleted);
 	}
+}
+
+void ATank::BrakeInput(const FInputActionValue& Value)
+{
+	bIsBraking = true;
+}
+
+void ATank::BrakeInputCompleted(const FInputActionValue& Value)
+{
+	bIsBraking = false;
 }
 
 void ATank::TurretTurnInput(const FInputActionValue& Value)

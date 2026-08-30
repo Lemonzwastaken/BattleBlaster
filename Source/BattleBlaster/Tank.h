@@ -52,6 +52,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* TurretTurnAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* BrakeAction;
+
 	UPROPERTY(EditAnywhere)
 	float TurretTurnRate = 100.0f;
 
@@ -61,7 +64,12 @@ public:
 	float TargetMoveInput = 0.0f;
 	float CurrentMoveInput = 0.0f;
 
+	UPROPERTY(EditAnywhere)
+	float BrakeDeceleration = 1500.0f;
+	bool bIsBraking = false;
 
+	void BrakeInput(const FInputActionValue& Value);
+	void BrakeInputCompleted(const FInputActionValue& Value);
 
 	void TurretTurnInput(const FInputActionValue& Value);
 
