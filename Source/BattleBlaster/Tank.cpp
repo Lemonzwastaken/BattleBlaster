@@ -44,16 +44,6 @@ void ATank::BeginPlay()
 void ATank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (PlayerController)
-	{
-		FHitResult HitResult;
-		PlayerController->GetHitResultUnderCursor(ECC_Visibility, false, HitResult);
-
-		RotateTurret(HitResult.ImpactPoint);
-
-		//DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.0f, 12, FColor::Red);
-	}
 }
 
 // Called to bind functionality to input
@@ -65,8 +55,19 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
 		EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATank::MoveInput);
 		EIC->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::TurnInput);
+		EIC->BindAction(TurretTurnAction, ETriggerEvent::Triggered, this, &ATank::TurretTurnInput);
 		EIC->BindAction(FireAction, ETriggerEvent::Started, this, &ATank::Fire);
 	}
+}
+
+void ATank::TurretTurnInput(const FInputActionValue& Value)
+{
+	float InputValue = Value.Get<float>();
+
+	FRotator DeltaRotation = FRotator::ZeroRotator;
+	DeltaRotation.Yaw = TurretTurnRate * InputValue * GetWorld()->GetDeltaSeconds();
+
+	TurretMesh->AddLocalRotation(DeltaRotation);
 }
 
 void ATank::MoveInput(const FInputActionValue& Value)
@@ -109,12 +110,10 @@ void ATank::SetPlayerEnabled(bool Enabled)
 		if (Enabled)
 		{
 			EnableInput(PlayerController);
-			PlayerController->SetShowMouseCursor(true);
 		}
 		else
 		{
 			DisableInput(PlayerController);
-			PlayerController->SetShowMouseCursor(false);
 		}
 	}
 }

@@ -49,6 +49,14 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* FireAction;
 
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* TurretTurnAction;
+
+	UPROPERTY(EditAnywhere)
+	float TurretTurnRate = 100.0f;
+
+	void TurretTurnInput(const FInputActionValue& Value);
+
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
