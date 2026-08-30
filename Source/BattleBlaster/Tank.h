@@ -55,6 +55,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	float TurretTurnRate = 100.0f;
 
+	UPROPERTY(EditAnywhere)
+	float Acceleration = 500.0f;
+
+	float TargetMoveInput = 0.0f;
+	float CurrentMoveInput = 0.0f;
+
+
+
 	void TurretTurnInput(const FInputActionValue& Value);
 
 	UPROPERTY(VisibleAnywhere)
@@ -74,6 +82,7 @@ public:
 	bool IsAlive = true;
 
 	void MoveInput(const FInputActionValue& Value);
+	void MoveInputCompleted(const FInputActionValue& Value);
 	void TurnInput(const FInputActionValue& Value);
 
 	void HandleDestruction();

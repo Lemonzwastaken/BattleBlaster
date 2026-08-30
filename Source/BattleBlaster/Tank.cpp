@@ -44,6 +44,13 @@ void ATank::BeginPlay()
 void ATank::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	CurrentMoveInput = FMath::FInterpConstantTo(CurrentMoveInput, TargetMoveInput, DeltaTime, Acceleration / Speed);
+
+	FVector DeltaLocation = FVector::ZeroVector;
+	DeltaLocation.X = Speed * CurrentMoveInput * DeltaTime;
+
+	AddActorLocalOffset(DeltaLocation, true);
 }
 
 // Called to bind functionality to input
@@ -54,6 +61,7 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	if (UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ATank::MoveInput);
+		EIC->BindAction(MoveAction, ETriggerEvent::Completed, this, &ATank::MoveInputCompleted);
 		EIC->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ATank::TurnInput);
 		EIC->BindAction(TurretTurnAction, ETriggerEvent::Triggered, this, &ATank::TurretTurnInput);
 		EIC->BindAction(FireAction, ETriggerEvent::Started, this, &ATank::Fire);
@@ -63,6 +71,7 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATank::TurretTurnInput(const FInputActionValue& Value)
 {
 	float InputValue = Value.Get<float>();
+	TargetMoveInput = Value.Get<float>();
 
 	FRotator DeltaRotation = FRotator::ZeroRotator;
 	DeltaRotation.Yaw = TurretTurnRate * InputValue * GetWorld()->GetDeltaSeconds();
@@ -72,12 +81,16 @@ void ATank::TurretTurnInput(const FInputActionValue& Value)
 
 void ATank::MoveInput(const FInputActionValue& Value)
 {
+
 	float InputValue = Value.Get<float>();
 
-	FVector DeltaLocation = FVector::ZeroVector;
-	DeltaLocation.X = Speed * InputValue * GetWorld()->GetDeltaSeconds();
+}
 
-	AddActorLocalOffset(DeltaLocation, true);
+void ATank::MoveInputCompleted(const FInputActionValue& Value)
+{
+
+	TargetMoveInput = 0.0f;
+
 }
 
 void ATank::TurnInput(const FInputActionValue& Value)
