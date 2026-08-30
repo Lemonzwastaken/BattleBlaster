@@ -51,6 +51,8 @@ void ATank::Tick(float DeltaTime)
 	DeltaLocation.X = Speed * CurrentMoveInput * DeltaTime;
 
 	AddActorLocalOffset(DeltaLocation, true);
+
+
 }
 
 // Called to bind functionality to input
@@ -71,7 +73,6 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void ATank::TurretTurnInput(const FInputActionValue& Value)
 {
 	float InputValue = Value.Get<float>();
-	TargetMoveInput = Value.Get<float>();
 
 	FRotator DeltaRotation = FRotator::ZeroRotator;
 	DeltaRotation.Yaw = TurretTurnRate * InputValue * GetWorld()->GetDeltaSeconds();
@@ -82,8 +83,7 @@ void ATank::TurretTurnInput(const FInputActionValue& Value)
 void ATank::MoveInput(const FInputActionValue& Value)
 {
 
-	float InputValue = Value.Get<float>();
-
+	TargetMoveInput = Value.Get<float>();
 }
 
 void ATank::MoveInputCompleted(const FInputActionValue& Value)
