@@ -76,6 +76,10 @@ public:
 
 	virtual void Fire();
 
+	UPROPERTY(EditAnywhere, Category = "Fire")
+	float FireCooldown = 1.0f;
+	float LastFireTime = -1000.0f;
+
 
 	UPROPERTY(EditAnywhere)
 	float BrakeDeceleration = 1500.0f;

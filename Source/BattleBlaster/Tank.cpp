@@ -84,6 +84,15 @@ void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ATank::Fire()
 {
+	float CurrentTime = GetWorld()->GetTimeSeconds();
+
+	if (CurrentTime - LastFireTime < FireCooldown)
+	{
+		return;
+	}
+
+	LastFireTime = CurrentTime;
+
 	Super::Fire();
 
 	CurrentRecoilOffset = RecoilKickAmount;
