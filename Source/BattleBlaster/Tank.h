@@ -64,6 +64,19 @@ public:
 	float TargetMoveInput = 0.0f;
 	float CurrentMoveInput = 0.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Recoil")
+	float RecoilKickAmount = 10.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Recoil")
+	float RecoilRecoverySpeed = 5.0f;
+
+	float CurrentRecoilOffset = 0.0f;
+
+	float CurrentTurretYaw = 0.0f;
+
+	virtual void Fire();
+
+
 	UPROPERTY(EditAnywhere)
 	float BrakeDeceleration = 1500.0f;
 	bool bIsBraking = false;
