@@ -21,8 +21,22 @@ class BATTLEBLASTER_API ABattleBlasterGameMode : public AGameModeBase
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
 
 public:
+
+	ABattleBlasterGameMode();
+
+	UPROPERTY(EditAnywhere)
+	float CameraBlendTime = 1.5f;
+
+	AActor* IntroCameraTarget;
+
+	bool bGameStarted = false;
+
+	void StartGame();
+
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UScreenMessage> ScreenMessageClass;

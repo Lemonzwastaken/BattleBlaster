@@ -3,6 +3,7 @@
 
 #include "BattleBlasterGameMode.h"
 
+#include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tower.h"
 #include "BattleBlasterGameInstance.h"
@@ -52,15 +53,59 @@ void ABattleBlasterGameMode::BeginPlay()
 		if (ScreenMessageWidget)
 		{
 			ScreenMessageWidget->AddToPlayerScreen();
-			ScreenMessageWidget->SetMessageText("Get Ready");
+			ScreenMessageWidget->SetMessageText("Press Enter to Start");
 		}
 
+		// Find and view the intro sky camera until the player starts the game
+		IntroCameraTarget = UGameplayStatics::GetActorOfClass(GetWorld(), ACameraActor::StaticClass());
+		if (IntroCameraTarget)
+		{
+			PlayerController->SetViewTargetWithBlend(IntroCameraTarget, 0.0f);
+		}
+	}
+}
+
+void ABattleBlasterGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bGameStarted)
+	{
+		return;
 	}
 
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PlayerController && PlayerController->WasInputKeyJustPressed(EKeys::Enter))
+	{
+		StartGame();
+	}
 
+}
+
+ABattleBlasterGameMode::ABattleBlasterGameMode()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
+
+void ABattleBlasterGameMode::StartGame()
+{
+	bGameStarted = true;
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PlayerController && Tank)
+	{
+		PlayerController->SetViewTargetWithBlend(Tank, CameraBlendTime);
+	}
+
+	if (ScreenMessageWidget)
+	{
+		ScreenMessageWidget->SetMessageText("Get Ready");
+	}
 
 	CountdownSeconds = CountdownDelay;
 	GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &ABattleBlasterGameMode::OnCountDownTimerTimeout, 1.0f, true);
+
+
 }
 
 
