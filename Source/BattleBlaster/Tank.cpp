@@ -6,6 +6,8 @@
 #include "InputMappingContext.h"
 #include "Kismet/GameplayStatics.h"
 #include "HealthComponent.h"
+#include "Components/AudioComponent.h"
+
 #include "HealthBar.h"
 
 
@@ -16,6 +18,11 @@ ATank::ATank()
 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
+
+	EngineAudioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("EngineAudioComp"));
+	EngineAudioComp->SetupAttachment(BaseMesh);
+	EngineAudioComp->bAutoActivate = false;
+
 }
 
 // Called when the game starts or when spawned
@@ -39,6 +46,14 @@ void ATank::BeginPlay()
 	}
 
 	SetPlayerEnabled(false);
+
+	if (EngineSound)
+	{
+		EngineAudioComp->SetSound(EngineSound);
+		EngineAudioComp->Play();
+	}
+
+
 
 	HealthComp = FindComponentByClass<UHealthComponent>();
 	if (HealthComp)
@@ -85,6 +100,14 @@ void ATank::Tick(float DeltaTime)
 	else
 	{
 		CurrentMoveInput = FMath::FInterpConstantTo(CurrentMoveInput, TargetMoveInput, DeltaTime, Acceleration / Speed);
+	}
+
+
+	if (EngineAudioComp)
+	{
+		float PitchAlpha = FMath::Abs(CurrentMoveInput);
+		float TargetPitch = FMath::Lerp(MinEnginePitch, MaxEnginePitch, PitchAlpha);
+		EngineAudioComp->SetPitchMultiplier(TargetPitch);
 	}
 
 	FVector DeltaLocation = FVector::ZeroVector;

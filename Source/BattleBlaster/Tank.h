@@ -125,5 +125,18 @@ public:
 	UFUNCTION()
 	void UpdateHealthBar(float CurrentHealth, float maxHealth);
 
+	UPROPERTY(VisibleAnywhere)
+	class UAudioComponent* EngineAudioComp;
+
+	UPROPERTY(EditAnywhere)
+	class USoundBase* EngineSound;
+
+	UPROPERTY(EditAnywhere ,Category = "Sound")
+	float MinEnginePitch = 0.8f;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	float MaxEnginePitch = 2.0f;
+
+
 
 };
