@@ -49,11 +49,24 @@ void ATank::BeginPlay()
 
 	if (PlayerController && HealthBarClass)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Attempting to create HealthBar widget"));
+
 		HealthBarWidget = CreateWidget<UHealthBar>(PlayerController, HealthBarClass);
 		if (HealthBarWidget)
 		{
-			HealthBarWidget->AddToPlayerScreen();
+			UE_LOG(LogTemp, Warning, TEXT("HealthBar widget created successfully, adding to screen"));
+			HealthBarWidget->AddToPlayerScreen(10);
 		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("CreateWidget returned null!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("PlayerController valid: %s, HealthBarClass valid: %s"),
+			PlayerController ? TEXT("true") : TEXT("false"),
+			HealthBarClass ? TEXT("true") : TEXT("false"));
 	}
 
 

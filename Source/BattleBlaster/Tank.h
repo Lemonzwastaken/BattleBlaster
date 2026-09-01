@@ -119,6 +119,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UHealthBar> HealthBarClass;
 
+	UPROPERTY()
 	UHealthBar* HealthBarWidget;
 
 	UFUNCTION()
