@@ -5,6 +5,9 @@
 #include "Camera/CameraComponent.h"
 #include "InputMappingContext.h"
 #include "Kismet/GameplayStatics.h"
+#include "HealthComponent.h"
+#include "HealthBar.h"
+
 
 ATank::ATank()
 {
@@ -36,6 +39,23 @@ void ATank::BeginPlay()
 	}
 
 	SetPlayerEnabled(false);
+
+	HealthComp = FindComponentByClass<UHealthComponent>();
+	if (HealthComp)
+	{
+		HealthComp->OnHealthChanged.AddDynamic(this, &ATank::UpdateHealthBar);
+
+	}
+
+	if (PlayerController && HealthBarClass)
+	{
+		HealthBarWidget = CreateWidget<UHealthBar>(PlayerController, HealthBarClass);
+		if (HealthBarWidget)
+		{
+			HealthBarWidget->AddToPlayerScreen();
+		}
+	}
+
 
 
 }
@@ -163,4 +183,14 @@ void ATank::SetPlayerEnabled(bool Enabled)
 			DisableInput(PlayerController);
 		}
 	}
+}
+
+void ATank::UpdateHealthBar(float CurrentHealth, float maxHealth)
+{
+
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetHealthPercent(CurrentHealth / maxHealth);
+	}
+
 }

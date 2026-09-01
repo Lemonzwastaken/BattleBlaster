@@ -24,6 +24,8 @@ void UHealthComponent::BeginPlay()
 	// ...
 	Health = MaxHealth;
 
+	OnHealthChanged.Broadcast(Health, MaxHealth);
+
 	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::OnDamageTaken);
 
 	AGameModeBase* GameMode = UGameplayStatics::GetGameMode(GetWorld());
@@ -47,6 +49,8 @@ void UHealthComponent::OnDamageTaken(AActor* DamagedActor, float Damage, const U
 	if (Damage > 0.0f)
 	{
 		Health -= Damage;
+		OnHealthChanged.Broadcast(Health, MaxHealth);
+
 		if (Health <= 0.0f)
 		{
 			if (BattleBlasterGameMode)

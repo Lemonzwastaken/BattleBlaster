@@ -112,4 +112,17 @@ public:
 
 	void HandleDestruction();
 	void SetPlayerEnabled(bool Enabled);
+
+	UPROPERTY()
+	class UHealthComponent* HealthComp;
+
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UHealthBar> HealthBarClass;
+
+	UHealthBar* HealthBarWidget;
+
+	UFUNCTION()
+	void UpdateHealthBar(float CurrentHealth, float maxHealth);
+
+
 };

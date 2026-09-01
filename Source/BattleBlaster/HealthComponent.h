@@ -37,4 +37,13 @@ public:
 
 	UFUNCTION()
 	void OnDamageTaken(AActor* DamagedActor, float Damage, const class UDamageType* DamageType, class AController* InstigatedBy, AActor* DamageCauser);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, CurrentHealth, float, MaxHealth);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnHealthChanged OnHealthChanged;
+
+
+
+
 };
