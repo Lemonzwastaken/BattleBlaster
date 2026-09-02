@@ -1,11 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "StartScreen.h"
 
 void UStartScreen::NativeConstruct()
 {
-	Super::NativeConstruct;
+	Super::NativeConstruct();
 
 	if (FadeOutAnim)
 	{
@@ -13,7 +12,6 @@ void UStartScreen::NativeConstruct()
 		FinishedDelegate.BindDynamic(this, &UStartScreen::HandleFadeOutFinished);
 		BindToAnimationFinished(FadeOutAnim, FinishedDelegate);
 	}
-
 }
 
 void UStartScreen::PlayFadeOut()

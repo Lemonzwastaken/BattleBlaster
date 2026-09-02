@@ -6,6 +6,8 @@
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tower.h"
+#include "StartScreen.h"
+
 #include "BattleBlasterGameInstance.h"
 
 void ABattleBlasterGameMode::BeginPlay()
@@ -16,7 +18,7 @@ void ABattleBlasterGameMode::BeginPlay()
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATower::StaticClass(), Towers);
 	TowerCount = Towers.Num();
 	UE_LOG(LogTemp, Display, TEXT("Number of towers: %d"), TowerCount);
-
+	
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	if (PlayerPawn)
 	{
@@ -48,15 +50,13 @@ void ABattleBlasterGameMode::BeginPlay()
 
 	if (PlayerController)
 	{
-		ScreenMessageWidget = CreateWidget<UScreenMessage>(PlayerController, ScreenMessageClass);
-
-		if (ScreenMessageWidget)
+		StartScreenWidget = CreateWidget<UStartScreen>(PlayerController, StartScreenClass);
+		if (StartScreenWidget)
 		{
-			ScreenMessageWidget->AddToPlayerScreen();
-			ScreenMessageWidget->SetMessageText("Press Enter to Start");
+			StartScreenWidget->AddToPlayerScreen();
+			StartScreenWidget->OnFadeOutComplete.AddDynamic(this, &ABattleBlasterGameMode::OnStartScreenFadedOut);
 		}
 
-		// Find and view the intro sky camera until the player starts the game
 		IntroCameraTarget = UGameplayStatics::GetActorOfClass(GetWorld(), ACameraActor::StaticClass());
 		if (IntroCameraTarget)
 		{
@@ -91,20 +91,16 @@ void ABattleBlasterGameMode::StartGame()
 {
 	bGameStarted = true;
 
+	if (StartScreenWidget)
+	{
+		StartScreenWidget->PlayFadeOut();
+	}
+
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PlayerController && Tank)
 	{
 		PlayerController->SetViewTargetWithBlend(Tank, CameraBlendTime);
 	}
-
-	if (ScreenMessageWidget)
-	{
-		ScreenMessageWidget->SetMessageText("Get Ready");
-	}
-
-	CountdownSeconds = CountdownDelay;
-	GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &ABattleBlasterGameMode::OnCountDownTimerTimeout, 1.0f, true);
-
 
 }
 
@@ -129,6 +125,29 @@ void ABattleBlasterGameMode::OnCountDownTimerTimeout()
 		GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
 		ScreenMessageWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
+
+}
+
+void ABattleBlasterGameMode::OnStartScreenFadedOut()
+{	
+
+
+
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	if (PlayerController)
+	{
+		ScreenMessageWidget = CreateWidget<UScreenMessage>(PlayerController, ScreenMessageClass);
+		if (ScreenMessageWidget)
+		{
+			ScreenMessageWidget->AddToPlayerScreen();
+			ScreenMessageWidget->SetMessageText("Get Ready");
+		}
+	}
+
+	CountdownSeconds = CountdownDelay;
+	GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &ABattleBlasterGameMode::OnCountDownTimerTimeout, 1.0f, true);
+
 
 }
 

@@ -64,5 +64,14 @@ public:
 
 	bool IsVictory = false;
 
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UStartScreen> StartScreenClass;
+
+	class UStartScreen* StartScreenWidget;
+
+	UFUNCTION()
+	void OnStartScreenFadedOut();
+
+
 };
 

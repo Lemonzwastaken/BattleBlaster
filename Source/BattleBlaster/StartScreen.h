@@ -10,18 +10,12 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFadeOutComplete);
 
-
-/**
- * 
- */
 UCLASS()
 class BATTLEBLASTER_API UStartScreen : public UUserWidget
 {
 	GENERATED_BODY()
-	
 
 public:
-
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	UWidgetAnimation* FadeOutAnim;
 
@@ -31,15 +25,9 @@ public:
 	void PlayFadeOut();
 
 protected:
-
 	virtual void NativeConstruct() override;
 
 private:
-
 	UFUNCTION()
 	void HandleFadeOutFinished();
-
-	
-
-
 };
