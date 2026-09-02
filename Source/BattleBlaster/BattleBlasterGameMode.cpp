@@ -130,9 +130,11 @@ void ABattleBlasterGameMode::OnCountDownTimerTimeout()
 
 void ABattleBlasterGameMode::OnStartScreenFadedOut()
 {	
+	GetWorldTimerManager().SetTimer(PostFadeTimerHandle, this, &ABattleBlasterGameMode::ShowGetReadyMessage, 1, false);
+}
 
-
-
+void ABattleBlasterGameMode::ShowGetReadyMessage()
+{
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
 	if (PlayerController)
@@ -147,8 +149,6 @@ void ABattleBlasterGameMode::OnStartScreenFadedOut()
 
 	CountdownSeconds = CountdownDelay;
 	GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &ABattleBlasterGameMode::OnCountDownTimerTimeout, 1.0f, true);
-
-
 }
 
 

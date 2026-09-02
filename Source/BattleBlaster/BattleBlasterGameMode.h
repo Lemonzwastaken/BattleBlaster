@@ -72,6 +72,11 @@ public:
 	UFUNCTION()
 	void OnStartScreenFadedOut();
 
+	FTimerHandle PostFadeTimerHandle;
+
+	void ShowGetReadyMessage();
+
+
 
 };
 
