@@ -6,7 +6,9 @@
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Tower.h"
+#include "EnemyTank.h"
 #include "StartScreen.h"
+
 
 #include "BattleBlasterGameInstance.h"
 
@@ -45,6 +47,21 @@ void ABattleBlasterGameMode::BeginPlay()
 
 		LoopIndex++;
 	}
+
+	TArray<AActor*> EnemyTanks;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyTank::StaticClass(), EnemyTanks);
+
+	for (AActor* EnemyActor : EnemyTanks)
+	{
+		AEnemyTank* EnemyTank = Cast<AEnemyTank>(EnemyActor);
+		if (EnemyTank && Tank)
+		{
+			EnemyTank->Tank = Tank;
+			UE_LOG(LogTemp, Display, TEXT("%s setting the tank variable!"), *EnemyTank->GetActorNameOrLabel());
+		}
+	}
+
+
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
