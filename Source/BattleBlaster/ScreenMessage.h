@@ -20,7 +20,14 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UTextBlock* MessageTextBlock;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	UTextBlock* ComboMessageBlock;
+
 	void SetMessageText(FString Message);
+
+	void SetComboText(FString ComboMessage);
+
+
 
 
 };

@@ -61,6 +61,13 @@ public:
 	void OnGameOverTimerTimeout();
 	void OnCountDownTimerTimeout();
 
+	int32 ComboCount = 0;
+
+	FTimerHandle ComboTimerHandle;
+
+	void AddCombo();
+	void ResetCombo();
+	void UpdateComboMessage();
 
 	bool IsVictory = false;
 
@@ -78,6 +85,8 @@ public:
 
 	bool bWaitingForFinalRestart = false;
 
+	UPROPERTY(EditAnywhere, Category = "Combo")
+	float ComboResetTime = 4.0f;
 
 
 };

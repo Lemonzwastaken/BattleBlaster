@@ -198,6 +198,59 @@ void ABattleBlasterGameMode::OnCountDownTimerTimeout()
 
 }
 
+void ABattleBlasterGameMode::AddCombo()
+{
+	ComboCount++;
+
+	GetWorldTimerManager().ClearTimer(ComboTimerHandle);
+
+	GetWorldTimerManager().SetTimer(
+		ComboTimerHandle,
+		this,
+		&ABattleBlasterGameMode::ResetCombo,
+		ComboResetTime,
+		false
+	);
+
+	UpdateComboMessage();
+
+}
+
+void ABattleBlasterGameMode::ResetCombo()
+{
+	ComboCount = 0;
+
+	if (ScreenMessageWidget)
+	{
+		ScreenMessageWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+}
+
+void ABattleBlasterGameMode::UpdateComboMessage()
+{
+	if (!ScreenMessageWidget)
+	{
+		return;
+	}
+
+	if (ComboCount < 2)
+	{
+		ScreenMessageWidget->SetVisibility(ESlateVisibility::Hidden);
+		return;
+	}
+
+	FString ComboText = FString::Printf(
+		TEXT("%dx COMBO!"),
+		ComboCount
+	);
+
+	ScreenMessageWidget->SetVisibility(ESlateVisibility::Visible);
+	ScreenMessageWidget->SetComboText(ComboText);
+
+
+}
+
 void ABattleBlasterGameMode::OnStartScreenFadedOut()
 {	
 	GetWorldTimerManager().SetTimer(PostFadeTimerHandle, this, &ABattleBlasterGameMode::ShowGetReadyMessage, 1, false);
@@ -230,12 +283,17 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 	if (DeadActor == Tank)
 	{
 		Tank->HandleDestruction();
+
+		ResetCombo();
+
 		IsGameOver = true;
 	}
 
 	else if (AEnemyTank* DeadEnemyTank = Cast<AEnemyTank>(DeadActor))
 	{
 		DeadEnemyTank->HandleDestruction();
+
+		AddCombo();
 
 		TowerCount--;
 
@@ -252,6 +310,8 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 		if (DeadTower)
 		{
 			DeadTower->HandleDestruction();
+
+			AddCombo();
 
 			TowerCount--;
 			if (TowerCount == 0)
@@ -308,7 +368,7 @@ void ABattleBlasterGameMode::OnGameOverTimerTimeout()
 		if (BattleBlasterGameInstance)
 		{
 			if (IsVictory)
-			{
+			{	
 				// Load the next level
 				BattleBlasterGameInstance->LoadNextLevel();
 			}

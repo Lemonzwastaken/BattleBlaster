@@ -5,9 +5,16 @@
 
 void UScreenMessage::SetMessageText(FString Message)
 {
-	FText MessageText = FText::FromString(Message);
-
-	MessageTextBlock->SetText(MessageText);
-
+    if (MessageTextBlock)
+    {
+        MessageTextBlock->SetText(FText::FromString(Message));
+    }
 }
 
+void UScreenMessage::SetComboText(FString ComboMessage)
+{
+    if (ComboMessageBlock)
+    {
+        ComboMessageBlock->SetText(FText::FromString(ComboMessage));
+    }
+}
