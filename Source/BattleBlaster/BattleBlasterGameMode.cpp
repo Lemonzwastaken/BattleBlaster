@@ -177,25 +177,26 @@ void ABattleBlasterGameMode::StartGame()
 
 void ABattleBlasterGameMode::OnCountDownTimerTimeout()
 {
-
 	CountdownSeconds -= 1;
 
 	if (CountdownSeconds > 0)
 	{
 		ScreenMessageWidget->SetMessageText(FString::FromInt(CountdownSeconds));
-
 	}
 	else if (CountdownSeconds == 0)
 	{
-		ScreenMessageWidget->SetMessageText("GO!");
-		Tank->SetPlayerEnabled(true);
+		ScreenMessageWidget->SetMessageText(TEXT("GO!"));
+		if (Tank)
+		{
+			Tank->SetPlayerEnabled(true);
+		}
 	}
 	else
 	{
 		GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
-		ScreenMessageWidget->SetVisibility(ESlateVisibility::Hidden);
-	}
 
+		ScreenMessageWidget->HideMessage();
+	}
 }
 
 void ABattleBlasterGameMode::AddCombo()
@@ -222,9 +223,8 @@ void ABattleBlasterGameMode::ResetCombo()
 
 	if (ScreenMessageWidget)
 	{
-		ScreenMessageWidget->SetVisibility(ESlateVisibility::Hidden);
+		ScreenMessageWidget->HideCombo();
 	}
-
 }
 
 void ABattleBlasterGameMode::UpdateComboMessage()
@@ -236,19 +236,12 @@ void ABattleBlasterGameMode::UpdateComboMessage()
 
 	if (ComboCount < 2)
 	{
-		ScreenMessageWidget->SetVisibility(ESlateVisibility::Hidden);
+		ScreenMessageWidget->HideCombo();
 		return;
 	}
 
-	FString ComboText = FString::Printf(
-		TEXT("%dx COMBO!"),
-		ComboCount
-	);
-
-	ScreenMessageWidget->SetVisibility(ESlateVisibility::Visible);
+	FString ComboText = FString::Printf(TEXT("%dx COMBO!"), ComboCount);
 	ScreenMessageWidget->SetComboText(ComboText);
-
-
 }
 
 void ABattleBlasterGameMode::OnStartScreenFadedOut()

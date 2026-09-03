@@ -23,11 +23,14 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UTextBlock* ComboMessageBlock;
 
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	UWidgetAnimation* ComboShake;
+
 	void SetMessageText(FString Message);
+	void HideMessage();
 
 	void SetComboText(FString ComboMessage);
-
-
+	void HideCombo();
 
 
 };
