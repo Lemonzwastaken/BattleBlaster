@@ -76,6 +76,8 @@ public:
 
 	void ShowGetReadyMessage();
 
+	bool bWaitingForFinalRestart = false;
+
 
 
 };

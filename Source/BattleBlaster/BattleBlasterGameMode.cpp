@@ -123,12 +123,28 @@ void ABattleBlasterGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+	if (bWaitingForFinalRestart)
+	{
+		if (PlayerController && PlayerController->WasInputKeyJustPressed(EKeys::Enter))
+		{
+			UBattleBlasterGameInstance* BattleBlasterGameInstance = Cast<UBattleBlasterGameInstance>(GetGameInstance());
+			if (BattleBlasterGameInstance)
+			{
+				BattleBlasterGameInstance->RestartGame();
+			}
+		}
+		return;
+	}
+
+
+
 	if (bGameStarted)
 	{
 		return;
 	}
 
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	if (PlayerController && PlayerController->WasInputKeyJustPressed(EKeys::Enter))
 	{
 		StartGame();
@@ -250,11 +266,34 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 	{
 		FString GameOverString = IsVictory ? "Victory!" : "Defeat!";
 
+		bool bIsFinalLevelWin = false;
+
+		if (IsVictory)
+		{
+			UBattleBlasterGameInstance* BattleBlasterGameInstance = Cast<UBattleBlasterGameInstance>(GetGameInstance());
+			if (BattleBlasterGameInstance)
+			{	
+
+				if (BattleBlasterGameInstance->CurrentLevelIndex >= BattleBlasterGameInstance->LastLevelIndex)
+				{
+					bIsFinalLevelWin = true;
+					GameOverString = "Game Won!!!!";
+				}
+			}
+		}
+
 		ScreenMessageWidget->SetVisibility(ESlateVisibility::Visible);
 		ScreenMessageWidget->SetMessageText(GameOverString);
 
-		FTimerHandle GameOverTimerHandle;
-		GetWorldTimerManager().SetTimer(GameOverTimerHandle, this, &ABattleBlasterGameMode::OnGameOverTimerTimeout, GameOverDelay, false);
+		if (bIsFinalLevelWin)
+		{
+			bWaitingForFinalRestart = true;
+		}
+		else
+		{
+			FTimerHandle GameOverTimerHandle;
+			GetWorldTimerManager().SetTimer(GameOverTimerHandle, this, &ABattleBlasterGameMode::OnGameOverTimerTimeout, GameOverDelay, false);
+		}
 	}
 }
 
