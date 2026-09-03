@@ -17,67 +17,104 @@ void ABattleBlasterGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	TArray<AActor*> Towers;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATower::StaticClass(), Towers);
+	UGameplayStatics::GetAllActorsOfClass(
+		GetWorld(),
+		ATower::StaticClass(),
+		Towers
+	);
+
 	TowerCount = Towers.Num();
-	UE_LOG(LogTemp, Display, TEXT("Number of towers: %d"), TowerCount);
-	
+
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+
 	if (PlayerPawn)
 	{
 		Tank = Cast<ATank>(PlayerPawn);
+
 		if (!Tank)
 		{
-			UE_LOG(LogTemp, Display, TEXT("GameMode: Failed to find the tank actor!"));
+			UE_LOG(
+				LogTemp,
+				Display,
+				TEXT("GameMode: Failed to find the tank actor!")
+			);
 		}
 	}
 
-	int32 LoopIndex = 0;
-	while (LoopIndex < TowerCount)
+	for (AActor* TowerActor : Towers)
 	{
-		AActor* TowerActor = Towers[LoopIndex];
-		if (TowerActor)
-		{
-			ATower* Tower = Cast<ATower>(TowerActor);
-			if (Tower && Tank)
-			{
-				Tower->Tank = Tank;
-				UE_LOG(LogTemp, Display, TEXT("%s setting the tank variable!"), *Tower->GetActorNameOrLabel());
-			}
-		}
+		ATower* Tower = Cast<ATower>(TowerActor);
 
-		LoopIndex++;
+		if (Tower && Tank)
+		{
+			Tower->Tank = Tank;
+
+			UE_LOG(
+				LogTemp,
+				Display,
+				TEXT("%s setting the tank variable!"),
+				*Tower->GetActorNameOrLabel()
+			);
+		}
 	}
 
 	TArray<AActor*> EnemyTanks;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemyTank::StaticClass(), EnemyTanks);
+	UGameplayStatics::GetAllActorsOfClass(
+		GetWorld(),
+		AEnemyTank::StaticClass(),
+		EnemyTanks
+	);
+
+	TowerCount += EnemyTanks.Num();
 
 	for (AActor* EnemyActor : EnemyTanks)
 	{
 		AEnemyTank* EnemyTank = Cast<AEnemyTank>(EnemyActor);
+
 		if (EnemyTank && Tank)
 		{
 			EnemyTank->Tank = Tank;
-			UE_LOG(LogTemp, Display, TEXT("%s setting the tank variable!"), *EnemyTank->GetActorNameOrLabel());
+
+			UE_LOG(
+				LogTemp,
+				Display,
+				TEXT("%s setting the tank variable!"),
+				*EnemyTank->GetActorNameOrLabel()
+			);
 		}
 	}
 
-
-
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	APlayerController* PlayerController =
+		UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
 	if (PlayerController)
 	{
-		StartScreenWidget = CreateWidget<UStartScreen>(PlayerController, StartScreenClass);
+		StartScreenWidget = CreateWidget<UStartScreen>(
+			PlayerController,
+			StartScreenClass
+		);
+
 		if (StartScreenWidget)
 		{
 			StartScreenWidget->AddToPlayerScreen();
-			StartScreenWidget->OnFadeOutComplete.AddDynamic(this, &ABattleBlasterGameMode::OnStartScreenFadedOut);
+
+			StartScreenWidget->OnFadeOutComplete.AddDynamic(
+				this,
+				&ABattleBlasterGameMode::OnStartScreenFadedOut
+			);
 		}
 
-		IntroCameraTarget = UGameplayStatics::GetActorOfClass(GetWorld(), ACameraActor::StaticClass());
+		IntroCameraTarget = UGameplayStatics::GetActorOfClass(
+			GetWorld(),
+			ACameraActor::StaticClass()
+		);
+
 		if (IntroCameraTarget)
 		{
-			PlayerController->SetViewTargetWithBlend(IntroCameraTarget, 0.0f);
+			PlayerController->SetViewTargetWithBlend(
+				IntroCameraTarget,
+				0.0f
+			);
 		}
 	}
 }
@@ -179,6 +216,20 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 		Tank->HandleDestruction();
 		IsGameOver = true;
 	}
+
+	else if (AEnemyTank* DeadEnemyTank = Cast<AEnemyTank>(DeadActor))
+	{
+		DeadEnemyTank->HandleDestruction();
+
+		TowerCount--;
+
+		if (TowerCount == 0)
+		{
+			IsGameOver = true;
+			IsVictory = true;
+		}
+	}
+
 	else
 	{
 		ATower* DeadTower = Cast<ATower>(DeadActor);

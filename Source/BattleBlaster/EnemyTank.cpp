@@ -9,6 +9,9 @@ AEnemyTank::AEnemyTank()
 	);
 
 	MovementComp->SetUpdatedComponent(CapsuleComp);
+	MovementComp->MaxSpeed = 300.0f;
+	MovementComp->Acceleration = 800.0f;
+	MovementComp->Deceleration = 1200.0f;
 
 	AIControllerClass = AEnemyAIController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
@@ -55,8 +58,15 @@ void AEnemyTank::Tick(float DeltaTime)
 	DirectionToTank.Z = 0.0f;
 
 	const float DistanceToTank = DirectionToTank.Size();
-
-	FollowNavigationPath();
+	
+	if (DistanceToTank > ChaseStopDistance)
+	{
+		FollowNavigationPath();
+	}
+	else
+	{
+		MovementComp->StopMovementImmediately();
+	}
 
 	RotateTurret(Tank->GetActorLocation());
 
