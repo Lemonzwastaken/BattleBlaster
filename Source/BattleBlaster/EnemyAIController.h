@@ -4,11 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+
 #include "EnemyAIController.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class BATTLEBLASTER_API AEnemyAIController : public AAIController
 {

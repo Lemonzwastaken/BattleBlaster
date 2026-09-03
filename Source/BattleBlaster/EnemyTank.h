@@ -1,13 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "BasePawn.h"
 #include "GameFramework/FloatingPawnMovement.h"
-
 #include "Tank.h"
-
 #include "EnemyTank.generated.h"
 
 UCLASS()
@@ -23,6 +19,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual UPawnMovementComponent* GetMovementComponent() const override;
+
 	UPROPERTY(VisibleAnywhere)
 	UFloatingPawnMovement* MovementComp;
 
@@ -35,9 +33,26 @@ public:
 	UPROPERTY(EditAnywhere)
 	float HullTurnSpeed = 5.0f;
 
+	UPROPERTY(EditAnywhere)
+	float ChaseStopDistance = 900.0f;
+
+	UPROPERTY(EditAnywhere)
+	float ChaseSpeed = 1.0f;
+
+	UPROPERTY()
 	ATank* Tank;
 
+	void SetNavigationPath(const TArray<FVector>& NewPathPoints);
 	void CheckFireCondition();
 	bool IsInFireRange();
 	void HandleDestruction();
+
+private:
+	bool FollowNavigationPath();
+
+	TArray<FVector> NavigationPathPoints;
+	int32 CurrentPathPointIndex = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Navigation")
+	float PathPointAcceptanceRadius = 75.0f;
 };
