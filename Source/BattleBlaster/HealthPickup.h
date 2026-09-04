@@ -45,6 +45,10 @@ protected:
 	);
 
 
+	FTimerHandle DestroyTimerHandle;
+	void DestroyPickup();
+
+
 
 public:
 	// Called every frame

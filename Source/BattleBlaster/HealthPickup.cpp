@@ -42,8 +42,13 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	if (Tank && Tank->HealthComp)
 	{
 		Tank->HealthComp->Heal(HealAmount);
-		Destroy();
+
+		GetWorldTimerManager().SetTimer(DestroyTimerHandle,	this,&AHealthPickup::DestroyPickup,	1.0f,false);
 	}
+}
+void AHealthPickup::DestroyPickup()
+{
+	Destroy();
 }
 
 // Called every frame
