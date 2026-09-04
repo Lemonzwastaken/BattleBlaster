@@ -10,6 +10,8 @@
 
 #include "BattleBlasterGameMode.generated.h"
 
+class USoundBase;
+
 /**
  *
  */
@@ -87,6 +89,24 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Combo")
 	float ComboResetTime = 4.0f;
+
+	//SOUNDS
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundBase* GameStartSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundBase* CountDownTickSound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundBase* GoSound;
+
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundBase* VictorySound;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	USoundBase* DefeatSound;
 
 
 };

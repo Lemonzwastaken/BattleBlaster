@@ -161,6 +161,11 @@ void ABattleBlasterGameMode::StartGame()
 {
 	bGameStarted = true;
 
+	if (GameStartSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), GameStartSound);
+	}
+
 	if (StartScreenWidget)
 	{
 		StartScreenWidget->PlayFadeOut();
@@ -186,6 +191,12 @@ void ABattleBlasterGameMode::OnCountDownTimerTimeout()
 	else if (CountdownSeconds == 0)
 	{
 		ScreenMessageWidget->SetMessageText(TEXT("GO!"));
+
+		if (GoSound)
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), GoSound);
+		}
+
 		if (Tank)
 		{
 			Tank->SetPlayerEnabled(true);
@@ -264,6 +275,12 @@ void ABattleBlasterGameMode::ShowGetReadyMessage()
 	}
 
 	CountdownSeconds = CountdownDelay;
+
+	if (CountDownTickSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), CountDownTickSound);
+	}
+
 	GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &ABattleBlasterGameMode::OnCountDownTimerTimeout, 1.0f, true);
 }
 
@@ -318,6 +335,7 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 	if (IsGameOver)
 	{
 		FString GameOverString = IsVictory ? "Victory!" : "Defeat!";
+		FString ContinueMessage = "";
 
 		bool bIsFinalLevelWin = false;
 
@@ -331,12 +349,29 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 				{
 					bIsFinalLevelWin = true;
 					GameOverString = "Game Won!!!!";
+					ContinueMessage = "Press ENTER to continue";
 				}
+			}
+		}
+
+		if (IsVictory)
+		{
+			if (VictorySound)
+			{
+				UGameplayStatics::PlaySound2D(GetWorld(), VictorySound);
+			}
+		}
+		else
+		{
+			if (DefeatSound)
+			{
+				UGameplayStatics::PlaySound2D(GetWorld(), DefeatSound);
 			}
 		}
 
 		ScreenMessageWidget->SetVisibility(ESlateVisibility::Visible);
 		ScreenMessageWidget->SetMessageText(GameOverString);
+		ScreenMessageWidget->SetComboText(ContinueMessage);
 
 		if (bIsFinalLevelWin)
 		{
