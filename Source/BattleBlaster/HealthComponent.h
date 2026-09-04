@@ -39,4 +39,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthChanged OnHealthChanged;
+
+	UFUNCTION(BlueprintCallable)
+	void Heal(float HealAmount);
+
 };

@@ -8,6 +8,7 @@
 #include "Tower.h"
 #include "EnemyTank.h"
 #include "StartScreen.h"
+#include "HealthPickup.h"
 
 
 #include "BattleBlasterGameInstance.h"
@@ -301,7 +302,21 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 
 	else if (AEnemyTank* DeadEnemyTank = Cast<AEnemyTank>(DeadActor))
 	{
+
+		FVector DeathLocation = DeadEnemyTank->GetActorLocation();
+		FRotator DeathRotation = DeadEnemyTank->GetActorRotation();
+
 		DeadEnemyTank->HandleDestruction();
+
+		if (HealthPickupClass && FMath::FRand() <= HealthPickupDropChance)
+		{
+			GetWorld()->SpawnActor<AHealthPickup>(
+				HealthPickupClass,
+				DeathLocation,
+				DeathRotation
+			);
+		}
+
 
 		AddCombo();
 
@@ -319,7 +334,21 @@ void ABattleBlasterGameMode::ActorDied(AActor* DeadActor)
 		ATower* DeadTower = Cast<ATower>(DeadActor);
 		if (DeadTower)
 		{
+			FVector DeathLocation = DeadTower->GetActorLocation();
+			FRotator DeathRotation = DeadTower->GetActorRotation();
+
 			DeadTower->HandleDestruction();
+
+			if (HealthPickupClass && FMath::FRand() <= HealthPickupDropChance)
+			{
+				GetWorld()->SpawnActor<AHealthPickup>(
+					HealthPickupClass,
+					DeathLocation,
+					DeathRotation
+				);
+
+			}
+
 
 			AddCombo();
 

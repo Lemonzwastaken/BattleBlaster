@@ -16,8 +16,8 @@ UCLASS()
 class BATTLEBLASTER_API AHealthPickup : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AHealthPickup();
 
@@ -25,11 +25,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USphereComponent* CollisionSphere;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* Mesh;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Pickup")
 	float HealAmount = 25.0f;
@@ -42,11 +42,11 @@ protected:
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult
-	)
+	);
 
 
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

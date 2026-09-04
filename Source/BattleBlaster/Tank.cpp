@@ -102,6 +102,13 @@ void ATank::Tick(float DeltaTime)
 		CurrentMoveInput = FMath::FInterpConstantTo(CurrentMoveInput, TargetMoveInput, DeltaTime, Acceleration / Speed);
 	}
 
+	CurrentRecoilOffset = FMath::FInterpTo(CurrentRecoilOffset, 0.0f, DeltaTime, RecoilRecoverySpeed);
+	TurretMesh->SetRelativeRotation(FRotator(CurrentRecoilOffset, CurrentTurretYaw, 0.0f));
+
+	// Camera follows turret yaw only — preserve existing pitch/roll
+	FRotator CurrentSpringArmRotation = SpringArmComp->GetRelativeRotation();
+	SpringArmComp->SetRelativeRotation(FRotator(CurrentSpringArmRotation.Pitch, CurrentTurretYaw, CurrentSpringArmRotation.Roll));
+
 
 	if (EngineAudioComp)
 	{

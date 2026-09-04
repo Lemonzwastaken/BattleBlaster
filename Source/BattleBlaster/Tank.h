@@ -137,6 +137,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	float MaxEnginePitch = 2.0f;
 
-
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float SpringArmPitch = -20.0f; 
 
 };

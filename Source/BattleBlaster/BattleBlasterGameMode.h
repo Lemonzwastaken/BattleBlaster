@@ -90,6 +90,13 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Combo")
 	float ComboResetTime = 4.0f;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Pickup")
+	TSubclassOf<class AHealthPickup> HealthPickupClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Pickup")
+	float HealthPickupDropChance = 0.5f;
+
+
 	//SOUNDS
 
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
