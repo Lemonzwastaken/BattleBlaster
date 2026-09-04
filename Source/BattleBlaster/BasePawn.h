@@ -11,6 +11,15 @@
 
 #include "BasePawn.generated.h"
 
+
+UENUM(BlueprintType)
+enum class ETeam : uint8
+{
+	Player,
+	Enemy
+};
+
+
 UCLASS()
 class BATTLEBLASTER_API ABasePawn : public APawn
 {
@@ -49,4 +58,8 @@ public:
 	virtual void Fire();
 
 	void HandleDestruction();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Team")
+	ETeam Team = ETeam::Enemy;
+
 };

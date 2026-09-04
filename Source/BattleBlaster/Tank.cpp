@@ -13,6 +13,9 @@
 
 ATank::ATank()
 {
+
+	Team = ETeam::Player;
+
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(CapsuleComp);
 
@@ -102,14 +105,6 @@ void ATank::Tick(float DeltaTime)
 		CurrentMoveInput = FMath::FInterpConstantTo(CurrentMoveInput, TargetMoveInput, DeltaTime, Acceleration / Speed);
 	}
 
-	CurrentRecoilOffset = FMath::FInterpTo(CurrentRecoilOffset, 0.0f, DeltaTime, RecoilRecoverySpeed);
-	TurretMesh->SetRelativeRotation(FRotator(CurrentRecoilOffset, CurrentTurretYaw, 0.0f));
-
-	// Camera follows turret yaw only — preserve existing pitch/roll
-	FRotator CurrentSpringArmRotation = SpringArmComp->GetRelativeRotation();
-	SpringArmComp->SetRelativeRotation(FRotator(CurrentSpringArmRotation.Pitch, CurrentTurretYaw, CurrentSpringArmRotation.Roll));
-
-
 	if (EngineAudioComp)
 	{
 		float PitchAlpha = FMath::Abs(CurrentMoveInput);
@@ -120,11 +115,23 @@ void ATank::Tick(float DeltaTime)
 	FVector DeltaLocation = FVector::ZeroVector;
 	DeltaLocation.X = Speed * CurrentMoveInput * DeltaTime;
 
-	AddActorLocalOffset(DeltaLocation, true);
+	FHitResult HitResult;
+	AddActorLocalOffset(DeltaLocation, true, &HitResult);
+
+	if (HitResult.bBlockingHit)
+	{
+		CurrentMoveInput = 0.0f;
+		TargetMoveInput = 0.0f;
+	}
 
 	CurrentRecoilOffset = FMath::FInterpTo(CurrentRecoilOffset, 0.0f, DeltaTime, RecoilRecoverySpeed);
 	TurretMesh->SetRelativeRotation(FRotator(CurrentRecoilOffset, CurrentTurretYaw, 0.0f));
+
+	// Camera follows turret yaw only — preserve existing pitch/roll
+	FRotator CurrentSpringArmRotation = SpringArmComp->GetRelativeRotation();
+	SpringArmComp->SetRelativeRotation(FRotator(CurrentSpringArmRotation.Pitch, CurrentTurretYaw, CurrentSpringArmRotation.Roll));
 }
+
 
 // Called to bind functionality to input
 void ATank::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

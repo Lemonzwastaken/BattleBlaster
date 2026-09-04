@@ -4,6 +4,8 @@
 #include "Projectile.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "BasePawn.h"
+
 
 // Sets default values
 AProjectile::AProjectile()
@@ -50,26 +52,38 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	{
 		if (OtherActor && (OtherActor != MyOwner) && (OtherActor != this))
 		{
-			UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwner->GetInstigatorController(), this, UDamageType::StaticClass());
+			ABasePawn* OwnerPawn = Cast<ABasePawn>(MyOwner);
+			ABasePawn* OtherPawn = Cast<ABasePawn>(OtherActor);
 
-			if (HitParticles)
-			{
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitParticles, GetActorLocation(), GetActorRotation());
-			}
-			if (HitSound)
-			{
-				UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, GetActorLocation());
-			}
+			bool bIsFriendlyFire = (OwnerPawn && OtherPawn && OwnerPawn->Team == OtherPawn->Team);
 
-			if (HitCameraShakeClass)
+			if (!bIsFriendlyFire)
 			{
-				APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+				UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwner->GetInstigatorController(), this, UDamageType::StaticClass());
 
-				if (PlayerController)
+				if (HitParticles)
 				{
-					PlayerController->ClientStartCameraShake(HitCameraShakeClass);
+					UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), HitParticles, GetActorLocation(), GetActorRotation());
 				}
+
+				if (HitSound)
+				{
+					UGameplayStatics::PlaySoundAtLocation(GetWorld(), HitSound, GetActorLocation());
+				}
+
+				if (HitCameraShakeClass)
+				{
+					APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+
+					if (PlayerController)
+					{
+						PlayerController->ClientStartCameraShake(HitCameraShakeClass);
+					}
+
+				}
+
 			}
+
 		}
 	}
 
