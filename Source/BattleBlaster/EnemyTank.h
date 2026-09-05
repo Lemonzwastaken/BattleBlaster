@@ -47,6 +47,9 @@ public:
 	bool IsInFireRange();
 	void HandleDestruction();
 
+
+
+
 private:
 	bool FollowNavigationPath();
 
@@ -55,4 +58,11 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Navigation")
 	float PathPointAcceptanceRadius = 75.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Randomization")
+	float SpeedVariance = 0.25f; // +/-25%
+
+	UPROPERTY(EditAnywhere, Category = "Randomization")
+	float FireRateVariance = 0.3f; // +/-30%
+
 };

@@ -25,14 +25,24 @@ void AEnemyTank::BeginPlay()
 		UGameplayStatics::GetPlayerPawn(GetWorld(), 0)
 	);
 
-	FTimerHandle FireTimerHandle;
+	const float SpeedMult = FMath::RandRange(1.0f - SpeedVariance, 1.0f + SpeedVariance);
+	MovementComp->MaxSpeed *= SpeedMult;
+	MovementComp->Acceleration *= SpeedMult;
+	HullTurnSpeed *= FMath::RandRange(0.8f, 1.2f);
 
+
+	const float RandomizedFireRate =
+		FireRate * FMath::RandRange(1.0f - FireRateVariance, 1.0f + FireRateVariance);
+	const float InitialFireDelay = FMath::RandRange(0.0f, RandomizedFireRate);
+
+	FTimerHandle FireTimerHandle;
 	GetWorldTimerManager().SetTimer(
 		FireTimerHandle,
 		this,
 		&AEnemyTank::CheckFireCondition,
-		FireRate,
-		true
+		RandomizedFireRate,
+		true,
+		InitialFireDelay
 	);
 }
 
@@ -131,9 +141,31 @@ void AEnemyTank::SetNavigationPath(const TArray<FVector>& NewPathPoints)
 
 bool AEnemyTank::FollowNavigationPath()
 {
-	if (!MovementComp || NavigationPathPoints.IsEmpty())
+	if (!MovementComp)
 	{
 		return false;
+	}
+
+	// No path yet, or path fully consumed — don't just sit idle
+	if (NavigationPathPoints.IsEmpty() || CurrentPathPointIndex >= NavigationPathPoints.Num())
+	{
+		if (AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController()))
+		{
+			AIController->RequestImmediateRepath();
+		}
+		if (Tank)
+		{
+			FVector DirectionToTank = Tank->GetActorLocation() - GetActorLocation();
+			DirectionToTank.Z = 0.0f;
+
+			if (DirectionToTank.SizeSquared() <= FMath::Square(PathPointAcceptanceRadius * 3.0f))
+			{
+				MovementComp->AddInputVector(DirectionToTank.GetSafeNormal(), true);
+				return true;
+			}
+		}
+
+		return false; // stay put and wait for the repath instead of cutting through walls/off-mesh
 	}
 
 	while (CurrentPathPointIndex < NavigationPathPoints.Num())
